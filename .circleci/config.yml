@@ -1,0 +1,23 @@
+executors:
+  nbcollection-builder:
+    docker:
+    - image: jbcurtin/nbcollection-builder
+    resource_class: medium
+    working_directory: ~/repo
+jobs:
+  Pull Request:
+    executor: nbcollection-builder
+    steps:
+    - checkout
+    - run:
+        command: nbcollection-ci pull-request -u $CI_PULL_REQUEST
+        name: Build Pull Request
+        no_output_timeout: 60m
+    - store_artifacts:
+        path: /tmp/nbcollection-ci-artifacts
+version: 2.1
+workflows:
+  Build Notebooks:
+    jobs:
+    - Pull Request
+  version: '2.1'
